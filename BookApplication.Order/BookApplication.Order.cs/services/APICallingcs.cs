@@ -1,42 +1,45 @@
 ﻿using BookApplication.Order.cs.Entity;
-using BookStoreApplicaion.Order.Entity; // Assuming this is the namespace where ResponseEntity is defined
+using BookStoreApplicaion.Order.Entity;
 using BookStoreApplication_User.Entity;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace BookApplication.Order.cs.services
 {
     public class APICallingcs
     {
-        public async Task<BookEntity> GetBookById(int bookid)
+
+        public static async Task<BookEntity> GetBookById(int bookid)
         {
             HttpClient client = new HttpClient();
 
-            HttpResponseMessage responseObj = await client.GetAsync("https://localhost:44324/api/Books/viewBookById?BookId=" + bookid);
+            string url = "https://localhost:44324/api/Books/viewBookById?BookId=";
 
-            if (responseObj.IsSuccessStatusCode)
+            HttpResponseMessage responseobj = await client.GetAsync(url + bookid);
+
+            if (responseobj.IsSuccessStatusCode)
             {
-                string content = await responseObj.Content.ReadAsStringAsync();
-
-              
-                ResponseEntity<BookEntity> response = JsonConvert.DeserializeObject<ResponseEntity<BookEntity>>(content);
-                return response.Data
+                String Content = await responseobj.Content.ReadAsStringAsync();
+                ResponseEntity<BookEntity> response = JsonConvert.DeserializeObject<ResponseEntity<BookEntity>>(Content);
+                return response.Data;
                 BookEntity book = JsonConvert.DeserializeObject<BookEntity>(response.Data.ToString());
 
                 return book;
             }
-
             return null;
         }
 
-        public async Task<UserEntity> GetUserProfileByIdAsync(int userId)
+        public async Task<UserEntity> GetUserProfileById(string token)
         {
             try
             {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync("https://localhost:44324/api/User/MyProfile");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                HttpResponseMessage response = await client.GetAsync("https://localhost:44323/api/User/MyProfile");
+               
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -58,6 +61,7 @@ namespace BookApplication.Order.cs.services
                 throw;
             }
         }
+       
     }
 }
 

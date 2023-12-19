@@ -82,12 +82,13 @@ namespace BookStoreApplicaion.Books.Services
         /// </summary>
         /// <param name="Book_id">The book identifier.</param>
         /// <returns></returns>
-        public List<BookEntity> viewBookbyid(int Book_id)
+        public BookEntity viewBookbyid(int Book_id)
         {
             try
             {
-                List<BookEntity> result = (List<BookEntity>)bookDBContext.Books.Where(x => x.Book_id== x.Book_id).ToList();
-                return result;
+                //var BookExicts = bookDBContext.Books.FirstOrDefault(x => x.Book_Name == BookName);
+                var result =bookDBContext.Books.FirstOrDefault(x => x.Book_id == x.Book_id);
+                return (BookEntity)result;
 
             }
             catch (Exception ex)

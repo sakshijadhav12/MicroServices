@@ -5,6 +5,7 @@ using BookStoreApplication_User.model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -77,6 +78,14 @@ namespace BookStoreApplication_User.service
             {
                 return null;
             }
+        }
+
+        public List<UserEntity> GetUsers() 
+        {
+            List<UserEntity> users = bookStoreDBContext.User.ToList();
+            return users;
+
+            
         }
 
         public UserEntity getprofile (int User_Id)

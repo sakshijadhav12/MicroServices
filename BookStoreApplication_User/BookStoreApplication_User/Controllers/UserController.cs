@@ -76,6 +76,21 @@ namespace BookStoreApplication_User.Controllers
                 return BadRequest("not found");
             }
         }
+        [HttpGet]
+        [Route("getallusers")]
+        public IActionResult getusers()
+        {
+            var result = userService.GetUsers();
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest("not found");
+            }
+
+        }
 
         [Authorize]
         [HttpGet]

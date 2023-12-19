@@ -11,7 +11,7 @@ namespace BookStoreApplicaion.Books.Interface
 
         public List<BookEntity> viewBook(string BookName);
         public BookEntity updatebook(string BookName, commandEntity entity);
-        public List<BookEntity> viewBookbyid(int Book_id);
+        public BookEntity viewBookbyid(int Book_id);
         public List<BookEntity> ViewBookOutofStock();
     }
 

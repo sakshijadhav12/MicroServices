@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Xml.Linq;
 
 namespace BookStoreAppliacation.Admin.Service
 {
@@ -22,15 +23,16 @@ namespace BookStoreAppliacation.Admin.Service
             this.adminDbContext = adminDbContext;
             this.configuration = configuration;
         }
-         public  BookStoreAdminEntity registeradmin(int Id, string name , string password)
+         public  BookStoreAdminEntity registeradmin(AdminModel adminModel)
         {
             try
             {
 
                 BookStoreAdminEntity admin = new BookStoreAdminEntity();
-                admin.AdminId = Id;
-                admin.Password = password;
-                admin.AdminName = name;
+                admin.AdminName = adminModel.Name;
+                admin.EmailId = adminModel.EmailId;
+                admin.Password = adminModel.Password;
+               
                 adminDbContext.Admin.Add(admin);
                 int result = adminDbContext.SaveChanges();
                 if (result > 0)
@@ -48,13 +50,13 @@ namespace BookStoreAppliacation.Admin.Service
                 throw ex;
             }
         }
-        public string admin_Login(int id,string password)
+        public string admin_Login(string EmailId,string password)
         {
             
-            BookStoreAdminEntity verifyAdmin = adminDbContext.Admin.FirstOrDefault(x => x.AdminId == id && x.Password == password);
+            BookStoreAdminEntity verifyAdmin = adminDbContext.Admin.FirstOrDefault(x => x.EmailId== EmailId  && x.Password == password);
             if (verifyAdmin != null)
             {
-                var token = GenerateToken(verifyAdmin.AdminId);
+                var token = GenerateToken(verifyAdmin.EmailId,verifyAdmin.AdminId);
                 return token;
 
 
@@ -64,15 +66,22 @@ namespace BookStoreAppliacation.Admin.Service
                 return null;
             }
         }
-        private string GenerateToken(int AdminId)
+
+  
+        private string GenerateToken(string EmailId, int User_Id)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.AddClaim(new Claim("Id", AdminId.ToString()));
+            var claims = new[]
+            {
+                new Claim("Email", EmailId),
+                  new Claim(ClaimTypes.Role,"Admin"),
+
+                        new Claim("User_Id", User_Id.ToString())
+            };
             var token = new JwtSecurityToken(configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
-                (System.Collections.Generic.IEnumerable<Claim>)claimsIdentity,
+                claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials);
 

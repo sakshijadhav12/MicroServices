@@ -2,6 +2,7 @@
 using BookStoreApplicaion.Books.Entity.CommandEntity;
 using BookStoreApplicaion.Books.Entity.QueryEntity;
 using BookStoreApplicaion.Books.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,8 @@ namespace BookStoreApplicaion.Books.Controllers
 
         [HttpPost]
         [Route("addBook")]
+        [Authorize(Roles ="Admin")]
+       
         public IActionResult AddBook([FromBody] commandEntity entity)
         {
             try
@@ -73,7 +76,7 @@ namespace BookStoreApplicaion.Books.Controllers
         {
             try
             {
-                var result = bookService.viewBookbyid( BookId);
+                var result = bookService.viewBookbyid(BookId);
             
 
                 if (result != null)

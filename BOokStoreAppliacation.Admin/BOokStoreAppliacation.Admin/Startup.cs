@@ -36,6 +36,7 @@ namespace BOokStoreAppliacation.Admin
             services.AddControllers();
             services.AddDbContext<AdminDbContext>(x => x.UseSqlServer(Configuration["ConnectionString:BookStoreDB_Admin"]));
             services.AddScoped<IAdmin, AdminService>();
+            services.AddScoped<BookStoreAppliacation.Admin.Service.Apicalling>();
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -108,9 +109,12 @@ namespace BOokStoreAppliacation.Admin
 
             app.UseHttpsRedirection();
             app.UseSwagger();
-
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
+            });
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
